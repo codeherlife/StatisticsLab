@@ -17,50 +17,129 @@
 #define SIZE 30
 
 int compare(const void *p, const void *q);
+void outputUnsorted(int scoresArray[]);
+void scoresSort(int scoresArray[], int max);
+void frequencyChart(int scoresArray[], int frequency[], int max);
+void passingFailing (int scoresArray[], int max);
+void printMean(int scoresArray[], int max);
+void printMode(int scoresArray[], int frequency[]);
 
 int main(void) {
-    int i, j;
+    int frequency[101];
+
     int scoresArray[] = { 90, 85, 100, 50, 50, 85, 60, 70, 55, 55, 80, 95, 70, 60, 95, 80, 100, 75, 70, 95, 90, 90, 70, 95, 50, 65, 85, 95, 100, 65 };
     
-    //before sort print statements
-    printf( "\n Un-Sorted Test Scores: \n");
-    j = 1;
-    for(i = 0; i < SIZE; i++){
-        if ( j % 5 ==0){
-            printf( "\n");
-        } else {
-                printf("%d ", scoresArray[i]);
-        }
-        j++;
-    }
+    outputUnsorted(scoresArray);
     
-    //after sort print statements
-    qsort(scoresArray, SIZE, sizeof(int), compare);
-    printf( "\n Sorted Test Scores: \n");
-    j = 1;
-    for(i = 0; i < SIZE; i++){
-        if ( j % 5 ==0){
-            printf( "\n");
-        } else {
-            printf("%d ", scoresArray[i]);
-        }
-        j++;
-    }
+    scoresSort(scoresArray, SIZE);
     
-    //print out the unsorted test scores, five per line
-    
-    //sort array in ascending order
-    
-    //print out the sorted test scores, five per line
+    frequencyChart(scoresArray, frequency, SIZE);
+    passingFailing(scoresArray, SIZE);
+    printMean(scoresArray, SIZE);
+    printMode(scoresArray, frequency);
     
     return 0;
 }
+//write a function that outputs test scores (unsorted, five per line)
 
-int compare (const void *p, const void *q) {
-    if (*(int *)p < *(int *)q) {
-        return -1;
+void outputUnsorted (int scoresArray[]){
+    int i, j;
+    printf( "\nUn-Sorted Test Scores: \n");
+    j = 0;
+    for(i = 0; i < SIZE; i++){
+        if ( j % 5 == 0) printf( "\n");
+        printf("%d ", scoresArray[i]);
+        j++;
     }
-        return *(int *)p > *(int *)q;
 }
+
+//function to sort the test scores:
+void scoresSort(int scoresArray[], int max){
+    int i, j, temp;
+    printf( "\nSorted Test Scores: \n");
+
+    for (i = 1; i < max; i++){
+        temp = scoresArray[i];
+        j = i - 1;
+        while(j >= 0 && temp < scoresArray[j]) {
+            scoresArray[j + 1] = scoresArray[j];
+            j = j - 1;
+        }
+        scoresArray[j+1] = temp;
+    }
+    j = 0;
+    for(i = 0; i < SIZE; i++){
+        if ( j % 5 == 0) printf( "\n");
+        printf("%d ", scoresArray[i]);
+        j++;
+    }
+}
+
+//calculate and print out the frequency distribution chart
+void frequencyChart(int scoresArray[], int frequency[], int max){
+    printf( "\n%5s %10s \n", "Score", "Frequency");
+    printf( "%5s %10s \n", "-----", "---------");
+    
+    for(int i = 0; i < 101; i++){
+        frequency[i] = 0;
+       
+    }
+    for(int i = max -1; i > 0; i--){
+        frequency[scoresArray[i]]++;
+        
+        /* printf("Score %d has frequency of %d\n", scoresArray[i], frequency[]); */
+        
+    }
+    
+    for(int i = 100; i > 0; i--){
+     if(frequency[i]){
+        printf("%5d %10d\n", i, frequency[i]);
+        }
+    }
+}
+
+//output the percentage of passing and failing test scores to the nearest tenth.
+
+void passingFailing (int scoresArray[], int max){
+    int pass = 0;
+    int fail = 0;
+    for(int i = 0; i < max; i++){
+        if(scoresArray[i] > 60){
+            pass++;
+        } else {
+            fail++;
+        }
+    }
+    printf("The percentage of passing scores: %.1lf\n", (double)pass/max * 100);
+   printf("The percentage of failing scores: %.1lf\n", (double)fail/ max * 100);
+}
+
+//calculate and print out the mean of the test scores to the nearest tenth
+
+void printMean(int scoresArray[], int max){
+    double sum = 0;
+    double mean = 0;
+    for(int i = 0; i < max; i++){
+        sum += scoresArray[i];
+        mean = sum/ max;
+    }
+    printf("The sum = %3.1lf and mean = %.1lf of the test scores. \n", sum, mean);
+}
+
+//print out the mode of the test scores to nearest tenth
+
+void printMode(int scoresArray[], int frequency[]){
+    int mode = 0;
+    for(int i = 0; i < 101; i++){
+        if(frequency[i] > frequency[mode]){
+            mode = i;
+        }
+    }
+    printf("The mode is: %d \n", mode);
+}
+
+
+
+
 
 
